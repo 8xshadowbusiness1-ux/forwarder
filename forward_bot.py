@@ -105,7 +105,7 @@ async def remove_channel_handler(client, message):
     app.remove_handler(remove_channel_handler, group=2)
 
 # ====== FORWARD PRIVATE MESSAGES ======
-@app.on_message(filters.private & ~filters.command)
+@app.on_message(filters.private & ~filters.command())
 async def forward_messages(client, message):
     if message.from_user.id != owner_id:
         return  # ignore messages from non-owner
@@ -120,3 +120,4 @@ async def forward_messages(client, message):
 
 # ====== RUN BOT ======
 app.run()
+
