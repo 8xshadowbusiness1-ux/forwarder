@@ -8,6 +8,7 @@ from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
+    CommandHandler,
     CallbackQueryHandler,
     MessageHandler,
     ContextTypes,
@@ -17,9 +18,9 @@ from telegram.ext import (
 # =============================
 # ⚙️ CONFIGURATION
 # =============================
-BOT_TOKEN = "7366502402:AAEij4_HcMkycR5-KxO2BBSd91026Cv_LbU"  # 👈 apna bot token daalna
-OWNER_ID = 1602198875              # 👈 apna Telegram user ID daalna
-SERVER_URL = "https://forwarder-c46l.onrender.com"  # 👈 apna render ya hosting URL daalna
+BOT_TOKEN = "7366502402:AAEij4_HcMkycR5-KxO2BBSd91026Cv_LbU"  # 👈 Apna bot token daalna
+OWNER_ID = 1602198875               # 👈 Apna Telegram user ID daalna
+SERVER_URL = "https://forwarder-c46l.onrender.com"  # 👈 Apna Render URL daalna
 CHANNELS_FILE = "channels.json"
 
 # =============================
@@ -59,11 +60,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if query.data == "add_channel":
         context.user_data["mode"] = "add"
-        await query.message.reply_text("✏️ Send me the channel username to **add** (e.g., @examplechannel)")
+        await query.message.reply_text("✏️ Send the channel username to **add** (e.g., @examplechannel)")
 
     elif query.data == "remove_channel":
         context.user_data["mode"] = "remove"
-        await query.message.reply_text("🗑️ Send me the channel username to **remove** (e.g., @examplechannel)")
+        await query.message.reply_text("🗑️ Send the channel username to **remove** (e.g., @examplechannel)")
 
     elif query.data == "list_channels":
         if channels:
@@ -149,13 +150,13 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text(f"⚠️ Error forwarding to {ch}: {e}")
 
 # =============================
-# 🚀 START BUTTON
+# 🚀 START COMMAND
 # =============================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
         await update.message.reply_text("❌ You are not authorized to use this bot.")
         return
-    await update.message.reply_text("Welcome, Boss 👑", reply_markup=main_buttons())
+    await update.message.reply_text("👋 Welcome, Boss! The bot is online ✅", reply_markup=main_buttons())
 
 # =============================
 # 🌐 FLASK KEEP-ALIVE SYSTEM
@@ -183,43 +184,9 @@ def keep_alive_ping():
 # =============================
 async def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
-    app.add_handler(MessageHandler(filters.COMMAND, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-
-    app.add_handler(MessageHandler(filters.COMMAND, handle_text))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.TEXT, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-    app.add_handler(MessageHandler(filters.ALL, handle_text))
-
     print("✅ Bot started successfully and running 24×7...")
     await app.run_polling()
 
@@ -230,3 +197,4 @@ if __name__ == "__main__":
     threading.Thread(target=run_flask).start()
     threading.Thread(target=keep_alive_ping).start()
     asyncio.run(main())
+
